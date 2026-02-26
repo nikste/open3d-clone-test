@@ -210,8 +210,10 @@ std::tuple<Eigen::Vector4d, std::vector<size_t>> PointCloud::SegmentPlane(
                 points_, plane_model, inliers, distance_threshold);
 #pragma omp critical
         {
+            const double kFitnessEpsilon = 1e-8;
             if (this_result.fitness_ > result.fitness_ ||
-                (this_result.fitness_ == result.fitness_ &&
+                (std::abs(this_result.fitness_ - result.fitness_) <
+                         kFitnessEpsilon &&
                  this_result.inlier_rmse_ < result.inlier_rmse_)) {
                 result = this_result;
                 best_plane_model = plane_model;
